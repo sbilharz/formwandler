@@ -16,7 +16,7 @@ module Formwandler
     end
 
     def hide_option(name, value = true)
-      hidden_options[name.to_sym] = value
+      hidden_options[name.to_s] = value
     end
 
     def hidden_options

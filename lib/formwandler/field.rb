@@ -78,7 +78,7 @@ module Formwandler
     end
 
     def model_instance
-      form.models[field_definition.model]
+      form.models[field_definition.model] if field_definition.model.present?
     end
 
     def _evaluate_field_definition_value(attr_name)

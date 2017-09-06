@@ -1,4 +1,6 @@
 require 'rails'
+require 'active_support/core_ext/hash'
+require 'active_record'
 require 'active_model'
 require 'formwandler'
 
