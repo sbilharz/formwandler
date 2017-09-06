@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     formwandler (0.1.0)
-      rails (~> 5.0)
+      rails (~> 5)
 
 GEM
   remote: https://rubygems.org/
@@ -125,7 +125,7 @@ PLATFORMS
 
 DEPENDENCIES
   formwandler!
-  rspec
+  rspec (~> 3)
 
 BUNDLED WITH
    1.15.4
