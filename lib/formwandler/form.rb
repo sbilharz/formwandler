@@ -66,17 +66,19 @@ module Formwandler
     end
 
     def field(name)
-      fields.fetch(name)
+      @fields.fetch(name)
     end
 
-    def fields(*names = nil)
-      fields = @fields
-      fields = fields.slice(*names) if names.present?
-      fields.values
+    def fields(*names)
+      if names.any?
+        @fields.fetch_values(*names)
+      else
+        @fields.values
+      end
     end
 
     def fields_for_model(model)
-      fields.values.select { |field| field.model == model }
+      fields.select { |field| field.model == model }
     end
 
     def models_valid?
@@ -109,7 +111,7 @@ module Formwandler
     end
 
     def assign_defaults
-      fields.values.each do |field|
+      fields.each do |field|
         next unless field.default?
         send("#{field.name}=", field.default) if send(field.name).nil?
       end
@@ -126,7 +128,7 @@ module Formwandler
     end
 
     def permitted_params(params)
-      visible_fields = fields.values.reject(&:hidden?).map(&:name)
+      visible_fields = fields.reject(&:hidden?).map(&:name)
       delocalizations = fields.transform_values(&:delocalize).compact
       params = ActionController::Parameters.new(params) if params.is_a?(Hash)
       params.require(model_name.param_key).permit(*visible_fields).delocalize(delocalizations)
