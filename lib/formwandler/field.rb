@@ -62,7 +62,7 @@ module Formwandler
     end
 
     def hidden_options
-      field_definition.hidden_options&.reject do |_option, value|
+      field_definition.hidden_options&.select do |_option, value|
         _evaluate_value(value)
       end&.keys || []
     end
