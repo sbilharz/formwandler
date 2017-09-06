@@ -46,7 +46,7 @@ module Formwandler
       attr_reader :model_save_order
     end
 
-    attr_reader :fields, :models, :current_user
+    attr_reader :models, :current_user
 
     def initialize(models: {}, current_user: nil)
       @models = models.symbolize_keys
@@ -67,6 +67,12 @@ module Formwandler
 
     def field(name)
       fields.fetch(name)
+    end
+
+    def fields(*names = nil)
+      fields = @fields
+      fields = fields.slice(*names) if names.present?
+      fields.values
     end
 
     def fields_for_model(model)
