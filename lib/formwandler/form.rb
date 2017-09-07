@@ -85,6 +85,7 @@ module Formwandler
       all_valid = true
       models.each do |name, model|
         all_valid = false if model.invalid?
+        next if model.valid?
         fields_for_model(name).each do |field|
           model.errors[field.source].each do |error_message|
             errors.add(field.name, error_message)
@@ -119,7 +120,7 @@ module Formwandler
 
     def save_models!
       models.sort_by do |(name, _model)|
-        self.class.model_save_order.index(name) || self.class.model_save_order.size
+        self.class.model_save_order&.index(name) || self.class.model_save_order&.size
       end.map(&:last).compact.each(&:save!)
     end
 
@@ -129,7 +130,7 @@ module Formwandler
 
     def permitted_params(params)
       visible_fields = fields.reject(&:hidden?).map(&:name)
-      delocalizations = fields.transform_values(&:delocalize).compact
+      delocalizations = fields.map(&:delocalize).compact
       params = ActionController::Parameters.new(params) if params.is_a?(Hash)
       params.require(model_name.param_key).permit(*visible_fields).delocalize(delocalizations)
     end

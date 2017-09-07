@@ -10,8 +10,17 @@ RSpec.describe Formwandler::Form do
       end
     end
   end
-  let(:my_model) { double }
-  let(:form) { form_class.new(models: {my_model: my_model}) }
+  let(:my_model) { double('ActiveRecord::Base', valid?: true, invalid?: false, save!: true) }
+  let(:models) { {my_model: my_model} }
+  let(:form) { form_class.new(models: models) }
+
+  before(:each) do
+    form_class.class_eval do
+      field :field1, model: :my_model
+      field :field2, model: :my_model
+      field :field3
+    end
+  end
 
   describe '#field' do
     subject { form.field(field_name) }
@@ -42,14 +51,6 @@ RSpec.describe Formwandler::Form do
   end
 
   describe '#fields' do
-    before(:each) do
-      form_class.class_eval do
-        field :field1, model: :my_model
-        field :field2, model: :my_model
-        field :field3
-      end
-    end
-
     context 'with no arguments' do
       subject { form.fields }
 
@@ -68,6 +69,22 @@ RSpec.describe Formwandler::Form do
       subject { form.fields(:field2, :foo) }
 
       it_behaves_like 'raising a KeyError'
+    end
+  end
+
+  describe '#submit' do
+    let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3'} }
+    let(:params) { {my_model: my_model_params} }
+
+    subject { form.submit(params) }
+
+    before(:each) do
+      expect(my_model).to receive(:field1=).with('value1').and_return('value1')
+      expect(my_model).to receive(:field2=).with('value2').and_return('value2')
+    end
+
+    context 'when all models are valid' do
+      it { is_expected.to eq(true) }
     end
   end
 end
