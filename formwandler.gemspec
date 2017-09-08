@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary = 'Form objects for rails'
   s.description = 'Create form objects for multiple models, dynamically mark fields as hidden or disabled and even hide select options dynamically'
   s.homepage = 'https://github.com/sbilharz/formwandler'
-  s.files = ['lib/formwandler.rb', 'lib/formwandler/form.rb', 'lib/formwandler/field_definition.rb', 'lib/formwandler/field.rb']
+  s.files = Dir['lib/**/*.rb']
   s.authors = ['Stefan Bilharz']
   s.email = 'sbilharz@heilmannsoftware.de'
   s.license = 'MIT'
