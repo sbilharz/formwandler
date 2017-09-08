@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'delocalize', '~> 1.2'
 
   s.add_development_dependency 'rspec', '~> 3'
+  s.add_development_dependency 'rspec-rails', '~> 3'
+  s.add_development_dependency 'rails-controller-testing', '~> 1'
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'byebug'
 end
