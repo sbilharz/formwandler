@@ -1,11 +1,10 @@
-require 'active_support/core_ext/hash'
-require 'active_record'
-require 'active_model'
-require 'action_controller'
-require 'delocalize'
-require 'formwandler'
+ENV["RAILS_ENV"] = "test"
 
-# manually plug in the delocalize gem since we don't have a properly intiated rails app
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+
+require 'delocalize'
+
+# manually plug in the delocalize gem since the railtie doesn't seem to get loaded properly
 ActionController::Parameters.send(:include, Delocalize::ParameterDelocalizing)
 
 RSpec.shared_examples_for 'raising an ArgumentError' do
