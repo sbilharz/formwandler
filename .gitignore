@@ -1,2 +1,3 @@
 .byebug_history
 formwandler-*.gem
+spec/dummy/log/*
