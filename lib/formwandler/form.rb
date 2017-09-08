@@ -46,15 +46,16 @@ module Formwandler
       attr_reader :model_save_order
     end
 
-    attr_reader :models, :current_user
+    attr_reader :models, :controller
 
-    def initialize(models: {}, current_user: nil)
+    def initialize(models: {}, controller:)
       @models = models.symbolize_keys
-      @current_user = current_user
+      @controller = controller
 
       initialize_fields
       initialize_models
       assign_defaults
+      assign_params
     end
 
     def persisted?
@@ -81,10 +82,6 @@ module Formwandler
       fields.select { |field| field.model == model }
     end
 
-    def assign_params(params)
-      assign_attributes permitted_params(params)
-    end
-
     def models_valid?
       all_valid = true
       models.each do |name, model|
@@ -99,9 +96,7 @@ module Formwandler
       all_valid
     end
 
-    def submit(params)
-      assign_params(params)
-
+    def submit
       if valid? && models_valid?
         save_models!
         load_results
@@ -110,7 +105,7 @@ module Formwandler
       end
     end
 
-    protected
+    private
 
     def initialize_models
     end
@@ -120,6 +115,11 @@ module Formwandler
         next unless field.default?
         send("#{field.name}=", field.default) if send(field.name).nil?
       end
+    end
+
+    def assign_params
+      return unless form_params?
+      assign_attributes permitted_params
     end
 
     def save_models!
@@ -132,14 +132,15 @@ module Formwandler
       true
     end
 
-    def permitted_params(params)
-      visible_fields = fields.reject(&:hidden?).map(&:name)
-      delocalizations = fields.map(&:delocalize).compact
-      params = ActionController::Parameters.new(params) if params.is_a?(Hash)
-      params.require(model_name.param_key).permit(*visible_fields).delocalize(delocalizations)
+    def form_params?
+      controller.params.fetch(model_name.param_key, {}).to_unsafe_h.any?
     end
 
-    private
+    def permitted_params
+      visible_fields = fields.reject(&:hidden?).map(&:name)
+      delocalizations = fields.map(&:delocalize).compact
+      controller.params.require(model_name.param_key).permit(*visible_fields).delocalize(delocalizations)
+    end
 
     def initialize_fields
       @fields = self.class.field_definitions.transform_values do |field_definition|

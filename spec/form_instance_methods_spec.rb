@@ -12,7 +12,9 @@ RSpec.describe Formwandler::Form do
   end
   let(:my_model) { double('ActiveRecord::Base', valid?: true, invalid?: false, save!: true) }
   let(:models) { {my_model: my_model} }
-  let(:form) { form_class.new(models: models) }
+  let(:controller) { double('ActionController::Base', params: ActionController::Parameters.new(params)) }
+  let(:params) { {} }
+  let(:form) { form_class.new(models: models, controller: controller) }
 
   before(:each) do
     form_class.class_eval do
@@ -74,9 +76,9 @@ RSpec.describe Formwandler::Form do
 
   describe '#submit' do
     let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3'} }
-    let(:params) { {my_model: my_model_params} }
+    let(:params) { super().merge(my_model: my_model_params) }
 
-    subject { form.submit(params) }
+    subject { form.submit }
 
     before(:each) do
       expect(my_model).to receive(:field1=).with('value1').and_return('value1')
