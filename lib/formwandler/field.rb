@@ -12,11 +12,7 @@ module Formwandler
     end
 
     def hidden?
-      if field_definition.hidden.respond_to?(:call)
-        form.instance_exec(&field_definition.hidden)
-      else
-        field_definition.hidden
-      end
+      _evaluate_field_definition_value(:hidden)
     end
 
     def visible?
@@ -24,11 +20,7 @@ module Formwandler
     end
 
     def disabled?
-      if field_definition.disabled.respond_to?(:call)
-        form.instance_exec(&field_definition.disabled)
-      else
-        field_definition.disabled
-      end
+      _evaluate_field_definition_value(:disabled)
     end
 
     def options
@@ -40,19 +32,11 @@ module Formwandler
     end
 
     def default
-      if field_definition.default.respond_to?(:call)
-        form.instance_exec(&field_definition.default)
-      else
-        field_definition.default
-      end
+      _evaluate_field_definition_value(:default)
     end
 
     def delocalize
-      if field_definition.delocalize.respond_to?(:call)
-        form.instance_exec(&field_definition.delocalize)
-      else
-        field_definition.delocalize
-      end
+      _evaluate_field_definition_value(:delocalize)
     end
 
     private
