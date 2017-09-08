@@ -1,6 +1,8 @@
+require_relative 'lib/formwandler/version'
+
 Gem::Specification.new do |s|
   s.name = 'formwandler'
-  s.version = '0.2.0'
+  s.version = Formwandler::VERSION
   s.summary = 'Form objects for rails'
   s.description = 'Create form objects for multiple models, dynamically mark fields as hidden or disabled and even hide select options dynamically'
   s.homepage = 'https://github.com/sbilharz/formwandler'
