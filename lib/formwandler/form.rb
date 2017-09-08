@@ -81,6 +81,10 @@ module Formwandler
       fields.select { |field| field.model == model }
     end
 
+    def assign_params(params)
+      assign_attributes permitted_params(params)
+    end
+
     def models_valid?
       all_valid = true
       models.each do |name, model|
@@ -96,7 +100,7 @@ module Formwandler
     end
 
     def submit(params)
-      assign_attributes permitted_params(params)
+      assign_params(params)
 
       if valid? && models_valid?
         save_models!
