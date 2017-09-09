@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-class MyModelsController < ApplicationController; end
-class MyModelForm < Formwandler::Form; end
-
 RSpec.describe Formwandler::FormLoader, type: :controller do
   controller MyModelsController do
     load_form only: [:index]
