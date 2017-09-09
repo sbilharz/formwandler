@@ -1,3 +1,4 @@
 .byebug_history
 formwandler-*.gem
 spec/dummy/log/*
+spec/dummy/db/*.sqlite3
