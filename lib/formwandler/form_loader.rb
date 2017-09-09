@@ -22,7 +22,7 @@ module Formwandler
     end
 
     def form_class_name
-      "#{inferred_resource_name}_form".camelize
+      "#{namespace}::#{inferred_resource_name.camelize}Form"
     end
 
     def form_class
@@ -30,7 +30,11 @@ module Formwandler
     end
 
     def form_instance_name
-      form_class_name.underscore
+      "#{inferred_resource_name}_form"
+    end
+
+    def namespace
+      self.class.name.split('::')[0..-2].join('::')
     end
 
     def inferred_resource_name

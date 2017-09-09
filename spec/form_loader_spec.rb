@@ -20,6 +20,23 @@ RSpec.describe Formwandler::FormLoader, type: :controller do
       subject
       expect(assigns(:my_model_form)).to be_an_instance_of(MyModelForm)
     end
+
+    context 'when the controller lives within a namespace' do
+      class MyNamespace::MyModelsController < ApplicationController; end
+
+      controller MyNamespace::MyModelsController do
+        load_form
+
+        def index
+          head 200
+        end
+      end
+
+      it 'creates a form from the namespace' do
+        subject
+        expect(assigns(:my_model_form)).to be_an_instance_of(MyNamespace::MyModelForm)
+      end
+    end
   end
 
   context 'for actions without load_form' do
