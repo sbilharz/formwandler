@@ -21,6 +21,30 @@ RSpec.describe Formwandler::FormLoader, type: :controller do
       expect(assigns(:my_model_form)).to be_an_instance_of(MyModelForm)
     end
 
+    context 'when a model instance is assigned to the matching instance variable' do
+      controller MyModelsController do
+        before_action { @my_model = MyModel.new }
+
+        load_form only: [:index]
+
+        def index
+          head 200
+        end
+      end
+
+      it 'injects it to the form instance' do
+        subject
+        expect(assigns(:my_model_form).models[:my_model]).to be_an_instance_of(MyModel)
+      end
+    end
+
+    context 'when the matching instance variable is not assigned' do
+      it 'does not inject nil into the form instance' do
+        subject
+        expect(assigns(:my_model_form).models.values).to_not include(nil)
+      end
+    end
+
     context 'when the controller lives within a namespace' do
       class MyNamespace::MyModelsController < ApplicationController; end
 
