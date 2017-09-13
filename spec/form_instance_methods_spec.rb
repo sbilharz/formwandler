@@ -90,4 +90,22 @@ RSpec.describe Formwandler::Form do
       it { is_expected.to eq(true) }
     end
   end
+
+  describe 'field values' do
+    context 'when the field has an "out" transformation' do
+      subject { form.transformed_field }
+
+      context 'when the model value is nil' do
+        it { is_expected.to eq(nil) }
+      end
+
+      context 'when the model value is present' do
+        before(:each) do
+          my_model.transformed_field = 0.05
+        end
+
+        it { is_expected.to eq('5.0') }
+      end
+    end
+  end
 end
