@@ -20,6 +20,15 @@ RSpec.describe Formwandler::Form do
       subject
     end
 
+    context 'when a field has a "source" option specified' do
+      let(:my_model_params) { super().merge(field4: 'value4') }
+
+      it 'correctly assigns the value' do
+        expect(my_model).to receive(:other_field=).with('value4').and_return('value4')
+        subject
+      end
+    end
+
     context 'when a field has an "in" transformation' do
       let(:my_model_params) { super().merge(transformed_field: '5') }
 
@@ -56,8 +65,8 @@ RSpec.describe Formwandler::Form do
     context 'with no arguments' do
       subject { form.fields }
 
-      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 4) }
-      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field)]) }
+      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 5) }
+      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4)]) }
     end
 
     context 'with multiple existing field names as arguments' do

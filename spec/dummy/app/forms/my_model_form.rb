@@ -4,6 +4,7 @@ class MyModelForm < Formwandler::Form
   field :field1, model: :my_model
   field :field2, model: :my_model
   field :field3
+  field :field4, model: :my_model, source: :other_field
   field :transformed_field, model: :my_model do
     transform do
       incoming { |value| value.to_d / 100 }
