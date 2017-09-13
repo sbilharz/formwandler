@@ -56,7 +56,7 @@ module Formwandler
     private
 
     def transform_value(value, transformation)
-      return if value.nil?
+      return if value.blank?
       if transformation.respond_to?(:call)
         form.instance_exec(value, &transformation)
       else

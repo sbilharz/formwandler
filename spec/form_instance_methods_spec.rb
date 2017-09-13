@@ -46,6 +46,12 @@ RSpec.describe Formwandler::Form do
         expect(my_model).to receive(:transformed_field=).with(0.05).and_return(0.05)
         subject
       end
+
+      context 'and an empty string is assigned' do
+        let(:my_model_params) { super().merge(transformed_field: '') }
+
+        it_behaves_like 'not raising an error'
+      end
     end
   end
 
