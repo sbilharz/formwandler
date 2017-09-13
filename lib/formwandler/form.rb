@@ -17,25 +17,22 @@ module Formwandler
         @field_definitions ||= {}
       end
 
-      def field(name, opts = {})
-        field_definitions[name] = FieldDefinition.new(name, opts)
+      def field(name, opts = {}, &block)
+        field_definition = FieldDefinition.new(name, opts)
+        field_definitions[name] = field_definition
 
-        yield(field_definitions[name]) if block_given?
+        field_definition.instance_exec(&block) if block_given?
 
-        if field_definitions[name].model.present?
-          attribute_accessor(name, field_definitions[name])
-        else
-          attr_accessor name
-        end
+        attribute_accessor(name)
       end
 
-      def attribute_accessor(name, field_definition)
+      def attribute_accessor(name)
         define_method "#{name}=" do |value|
-          models[field_definition.model].send("#{field_definition.source}=", value)
+          field(name).value = value
         end
 
         define_method name do
-          models[field_definition.model].send(field_definition.source)
+          field(name).value
         end
       end
 

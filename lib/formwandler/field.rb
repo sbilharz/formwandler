@@ -11,6 +11,20 @@ module Formwandler
       @field_definition = field_definition
     end
 
+    def value=(new_value)
+      new_value = transform_value(new_value, field_definition.in_transformation)
+      if model_instance
+        model_instance.public_send("#{field_definition.source}=", new_value)
+      else
+        @value = new_value
+      end
+    end
+
+    def value
+      _value = (model_instance ? model_instance.public_send(field_definition.source) : @value)
+      transform_value(_value, field_definition.out_transformation)
+    end
+
     def hidden?
       _evaluate_field_definition_value(:hidden)
     end
@@ -40,6 +54,14 @@ module Formwandler
     end
 
     private
+
+    def transform_value(value, transformation)
+      if transformation.respond_to?(:call)
+        form.instance_exec(value, &transformation)
+      else
+        value
+      end
+    end
 
     def all_options
       _evaluate_field_definition_value(:options) || options_from_model || []

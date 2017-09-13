@@ -8,8 +8,8 @@ RSpec.describe Formwandler::Form do
     let(:name) { 'the_field' }
     let(:options) { {hidden: true, model: :my_model} }
     let(:block) do
-      lambda do |field|
-        field.hide_option :my_option, -> { true }
+      lambda do
+        hide_option :my_option, -> { true }
       end
     end
 
@@ -41,12 +41,6 @@ RSpec.describe Formwandler::Form do
       subject { MyForm.field(name, options, &block) }
 
       it_behaves_like 'not raising an error'
-
-      context 'with a block of arity 0' do
-        let(:block) { -> { } }
-
-        it_behaves_like 'raising an ArgumentError'
-      end
     end
   end
 end
