@@ -7,7 +7,7 @@ class MyModelForm < Formwandler::Form
   field :field2, model: :my_model
   field :field3
   field :field4, model: :my_model, source: :other_field
-  field :transformed_field, model: :my_model do
+  field :transformed_field, delocalize: :number, model: :my_model do
     transform do
       incoming { |value| value.to_d / 100 }
       outgoing { |value| number_with_delimiter(value * 100) }

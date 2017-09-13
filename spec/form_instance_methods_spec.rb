@@ -29,6 +29,16 @@ RSpec.describe Formwandler::Form do
       end
     end
 
+    context 'when a field has a "delocalize" option specified' do
+      it 'calls the delocalize method on the controller params with the correct parameters' do
+        model_params = double
+        allow(controller.params).to receive(:require).and_return(model_params)
+        allow(model_params).to receive(:permit).and_return(model_params)
+        expect(model_params).to receive(:delocalize).with(a_hash_including(transformed_field: :number)).and_return({})
+        subject
+      end
+    end
+
     context 'when a field has an "in" transformation' do
       let(:my_model_params) { super().merge(transformed_field: '5') }
 
