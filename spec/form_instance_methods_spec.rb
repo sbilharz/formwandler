@@ -50,7 +50,10 @@ RSpec.describe Formwandler::Form do
       context 'and an empty string is assigned' do
         let(:my_model_params) { super().merge(transformed_field: '') }
 
-        it_behaves_like 'not raising an error'
+        it 'assigns the empty string to the model attribute' do
+          expect(my_model).to receive(:transformed_field=).with('').and_return('')
+          subject
+        end
       end
     end
   end
