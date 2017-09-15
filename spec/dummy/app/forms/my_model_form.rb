@@ -13,4 +13,5 @@ class MyModelForm < Formwandler::Form
       outgoing { |value| number_with_delimiter(value * 100) }
     end
   end
+  field :boolean_field, model: :my_model
 end

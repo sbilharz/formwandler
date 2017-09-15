@@ -81,8 +81,8 @@ RSpec.describe Formwandler::Form do
     context 'with no arguments' do
       subject { form.fields }
 
-      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 5) }
-      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4)]) }
+      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 6) }
+      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field)]) }
     end
 
     context 'with multiple existing field names as arguments' do
@@ -108,6 +108,18 @@ RSpec.describe Formwandler::Form do
   end
 
   describe 'field values' do
+    context 'when the field has no "out" transformation' do
+      subject { form.boolean_field }
+
+      context 'when the model value is false' do
+        before(:each) do
+          my_model.boolean_field = false
+        end
+
+        it { is_expected.to eq(false) }
+      end
+    end
+
     context 'when the field has an "out" transformation' do
       subject { form.transformed_field }
 
