@@ -21,8 +21,11 @@ module Formwandler
     end
 
     def value
-      _value = (model_instance ? model_instance.public_send(field_definition.source) : @value)
-      transform_value(_value, field_definition.out_transformation)
+      transform_value(raw_value, field_definition.out_transformation)
+    end
+
+    def raw_value
+      model_instance ? model_instance.public_send(field_definition.source) : @value
     end
 
     def hidden?
