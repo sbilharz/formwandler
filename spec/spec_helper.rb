@@ -7,11 +7,6 @@ require 'rspec/rails'
 require 'rails-controller-testing'
 Rails::Controller::Testing.install
 
-require 'delocalize'
-
-# manually plug in the delocalize gem since the railtie doesn't seem to get loaded properly
-ActionController::Parameters.send(:include, Delocalize::ParameterDelocalizing)
-
 RSpec.configure do |c|
   c.infer_base_class_for_anonymous_controllers = false
 end

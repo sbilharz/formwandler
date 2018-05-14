@@ -2,6 +2,7 @@
 
 require_relative 'field_definition'
 require_relative 'field'
+require 'delocalize'
 
 module Formwandler
   class Form
