@@ -7,6 +7,7 @@ class MyModelForm < Formwandler::Form
   field :field2, model: :my_model
   field :field3
   field :field4, model: :my_model, source: :other_field
+  field :array_field, array: true
   field :transformed_field, delocalize: :number, model: :my_model do
     transform do
       incoming { |value| value.to_d / 100 }

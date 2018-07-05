@@ -9,7 +9,8 @@ RSpec.describe Formwandler::Form do
   let(:form) { form_class.new(models: models, controller: controller) }
 
   describe '#initialize' do
-    let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3'} }
+    let(:array_value) { ['1', '2', '3'] }
+    let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3', array_field: array_value} }
     let(:params) { super().merge(my_model: my_model_params) }
 
     subject { form }
@@ -18,6 +19,10 @@ RSpec.describe Formwandler::Form do
       expect(my_model).to receive(:field1=).with('value1').and_return('value1')
       expect(my_model).to receive(:field2=).with('value2').and_return('value2')
       subject
+    end
+
+    it 'assigns array values' do
+      expect(subject).to have_attributes(array_field: array_value)
     end
 
     context 'when a field has a "source" option specified' do
@@ -84,8 +89,8 @@ RSpec.describe Formwandler::Form do
     context 'with no arguments' do
       subject { form.fields }
 
-      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 6) }
-      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field)]) }
+      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 7) }
+      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field), have_attributes(name: :array_field)]) }
     end
 
     context 'with multiple existing field names as arguments' do

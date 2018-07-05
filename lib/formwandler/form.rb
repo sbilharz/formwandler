@@ -137,8 +137,13 @@ module Formwandler
     end
 
     def permitted_params
-      visible_fields = fields.reject(&:hidden?).map(&:name)
       controller.params.require(model_name.param_key).permit(*visible_fields).delocalize(delocalizations)
+    end
+
+    def visible_fields
+      fields.reject(&:hidden?).map do |field|
+        field.array? ? {field.name => []} : field.name
+      end
     end
 
     def delocalizations
