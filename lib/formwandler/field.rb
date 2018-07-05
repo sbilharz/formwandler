@@ -56,6 +56,10 @@ module Formwandler
       _evaluate_field_definition_value(:delocalize)
     end
 
+    def array?
+      field_definition.array
+    end
+
     private
 
     def transform_value(value, transformation)
