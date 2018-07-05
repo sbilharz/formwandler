@@ -96,7 +96,9 @@ module Formwandler
 
     def submit
       if valid? && models_valid?
-        save_models!
+        ActiveRecord::Base.transaction do
+          save_models!
+        end
         load_results
       else
         false
