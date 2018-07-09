@@ -19,9 +19,12 @@ module Formwandler
       end
 
       def field(name, opts = {}, &block)
-        field_definition = FieldDefinition.new(name, opts)
-        field_definitions[name] = field_definition
-
+        field_definition = field_definitions[name] ||= FieldDefinition.new(name)
+        opts.each do |key, value|
+          field_definition.public_send("#{key}=", value)
+        rescue NoMethodError
+          raise ArgumentError, "Invalid option #{key}"
+        end
         field_definition.instance_exec(&block) if block_given?
 
         attribute_accessor(name)
