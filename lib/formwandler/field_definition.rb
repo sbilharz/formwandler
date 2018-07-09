@@ -4,21 +4,12 @@ require_relative 'field_value_transformer'
 
 module Formwandler
   class FieldDefinition
-    attr_reader :name, :hidden, :disabled, :default, :delocalize, :model, :source, :options, :array
+    attr_reader :name
+    attr_accessor :hidden, :disabled, :default, :delocalize, :model, :source, :options, :array
 
     def initialize(name)
       @name = name
-    end
-
-    def set(hidden: false, disabled: false, default: nil, delocalize: nil, model: nil, source: nil, options: nil, array: false)
-      @hidden = hidden
-      @disabled = disabled
-      @default = default
-      @delocalize = delocalize
-      @model = model
-      @source = source || name
-      @options = options
-      @array = array
+      set_defaults
     end
 
     def hide_option(name, value = true)
@@ -44,5 +35,16 @@ module Formwandler
     private
 
     attr_reader :value_transformer
+
+    def set_defaults
+      @hidden = false
+      @disabled = false
+      @default = nil
+      @delocalize = nil
+      @model = nil
+      @source = name
+      @options = nil
+      @array = false
+    end
   end
 end

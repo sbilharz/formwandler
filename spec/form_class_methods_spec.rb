@@ -43,13 +43,21 @@ RSpec.describe Formwandler::Form do
       it_behaves_like 'not raising an error'
 
       context 'when the field was already defined' do
+        let(:default_value) { 'a_string' }
+        let(:form_instance) { MyForm.new(models: {}, controller: double(params: ActionController::Parameters.new({}))) }
+
         before(:each) do
-          MyForm.field name, model: :another_model
+          MyForm.field name, model: :another_model, default: default_value
         end
 
         it 'overwrites the given options' do
           subject
-          expect(MyForm.new(models: {}, controller: double(params: ActionController::Parameters.new({}))).field(name).model).to eq(options[:model])
+          expect(form_instance.field(name).model).to eq(options[:model])
+        end
+
+        it 'keeps options that haven\'t been overwritten' do
+          subject
+          expect(form_instance.field(name).default).to eq(default_value)
         end
       end
     end
