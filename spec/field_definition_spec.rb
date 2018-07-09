@@ -2,8 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Formwandler::FieldDefinition do
   let(:field_name) { :my_field }
-  let(:options) { {} }
-  let(:field_definition) { described_class.new(field_name, options) }
+  let(:field_definition) { described_class.new(field_name) }
 
   subject { field_definition }
 

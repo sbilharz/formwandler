@@ -41,6 +41,17 @@ RSpec.describe Formwandler::Form do
       subject { MyForm.field(name, options, &block) }
 
       it_behaves_like 'not raising an error'
+
+      context 'when the field was already defined' do
+        before(:each) do
+          MyForm.field name, model: :another_model
+        end
+
+        it 'overwrites the given options' do
+          subject
+          expect(MyForm.new(models: {}, controller: double(params: ActionController::Parameters.new({}))).field(name).model).to eq(options[:model])
+        end
+      end
     end
   end
 end

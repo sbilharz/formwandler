@@ -19,9 +19,8 @@ module Formwandler
       end
 
       def field(name, opts = {}, &block)
-        field_definition = FieldDefinition.new(name, opts)
-        field_definitions[name] = field_definition
-
+        field_definition = field_definitions[name] ||= FieldDefinition.new(name)
+        field_definition.set(opts)
         field_definition.instance_exec(&block) if block_given?
 
         attribute_accessor(name)

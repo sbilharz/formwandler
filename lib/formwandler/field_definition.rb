@@ -6,8 +6,11 @@ module Formwandler
   class FieldDefinition
     attr_reader :name, :hidden, :disabled, :default, :delocalize, :model, :source, :options, :array
 
-    def initialize(name, hidden: false, disabled: false, default: nil, delocalize: nil, model: nil, source: nil, options: nil, array: false)
+    def initialize(name)
       @name = name
+    end
+
+    def set(hidden: false, disabled: false, default: nil, delocalize: nil, model: nil, source: nil, options: nil, array: false)
       @hidden = hidden
       @disabled = disabled
       @default = default
