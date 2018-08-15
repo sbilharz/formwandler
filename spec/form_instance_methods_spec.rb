@@ -5,14 +5,12 @@ RSpec.describe Formwandler::Form do
   let(:my_model) { MyModel.new }
   let(:models) { {my_model: my_model} }
   let(:controller) { double('MyModelsController', params: ActionController::Parameters.new(params)) }
-  let(:params) { {} }
+  let(:array_value) { ['1', '2', '3'] }
+  let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3', array_field: array_value} }
+  let(:params) { {my_model: my_model_params} }
   let(:form) { form_class.new(models: models, controller: controller) }
 
   describe '#initialize' do
-    let(:array_value) { ['1', '2', '3'] }
-    let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3', array_field: array_value} }
-    let(:params) { super().merge(my_model: my_model_params) }
-
     subject { form }
 
     it 'assigns the matching params' do
@@ -110,8 +108,40 @@ RSpec.describe Formwandler::Form do
   describe '#submit' do
     subject { form.submit }
 
-    context 'when all models are valid' do
-      it { is_expected.to eq(true) }
+    context 'when the form validations pass' do
+      context 'and all models are valid' do
+        it { is_expected.to eq(true) }
+      end
+
+      context 'but a model is invalid' do
+        let(:my_model_params) { super().merge(field2: 'invalid_value') }
+
+        it { is_expected.to eq(false) }
+
+        it 'adds an error message' do
+          subject
+          expect(form.errors).to have_key(:field2)
+        end
+      end
+    end
+
+    context 'when the form validations fail' do
+      let(:my_model_params) { super().merge(field3: 'invalid_value') }
+
+      context 'and all models are valid' do
+        it { is_expected.to eq(false) }
+      end
+
+      context 'and a model is invalid, too' do
+        let(:my_model_params) { super().merge(field2: 'invalid_value') }
+
+        it { is_expected.to eq(false) }
+
+        it 'adds all error keys' do
+          subject
+          expect(form.errors.keys).to match_array([:field2, :field3])
+        end
+      end
     end
   end
 
