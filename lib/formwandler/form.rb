@@ -83,22 +83,14 @@ module Formwandler
       fields.select { |field| field.model == model }
     end
 
-    def models_valid?
-      all_valid = true
-      models.each do |name, model|
-        all_valid = false if model.invalid?
-        next if model.valid?
-        fields_for_model(name).each do |field|
-          model.errors[field.source].each do |error_message|
-            errors.add(field.name, error_message)
-          end
-        end
-      end
-      all_valid
+    def valid?
+      form_valid = super
+      models_valid = models_valid?
+      form_valid && models_valid
     end
 
     def submit
-      if valid? && models_valid?
+      if valid?
         ActiveRecord::Base.transaction do
           save_models!
         end
@@ -123,6 +115,20 @@ module Formwandler
     def assign_params
       return unless form_params?
       assign_attributes permitted_params
+    end
+
+    def models_valid?
+      all_valid = true
+      models.each do |name, model|
+        all_valid = false if model.invalid?
+        next if model.valid?
+        fields_for_model(name).each do |field|
+          model.errors[field.source].each do |error_message|
+            errors.add(field.name, error_message)
+          end
+        end
+      end
+      all_valid
     end
 
     def save_models!

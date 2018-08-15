@@ -15,4 +15,6 @@ class MyModelForm < Formwandler::Form
     end
   end
   field :boolean_field, model: :my_model
+
+  validates :field3, inclusion: {in: ['value3']}
 end
