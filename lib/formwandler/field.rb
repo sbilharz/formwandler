@@ -40,6 +40,10 @@ module Formwandler
       _evaluate_field_definition_value(:disabled)
     end
 
+    def readonly?
+      _evaluate_field_definition_value(:readonly)
+    end
+
     def options
       all_options - hidden_options
     end
