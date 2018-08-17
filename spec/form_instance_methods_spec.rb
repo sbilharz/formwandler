@@ -45,6 +45,26 @@ RSpec.describe Formwandler::Form do
       end
     end
 
+    context 'when a field has a `readonly` proc' do
+      let(:my_model_params) { super().merge(readonly_field: 'readonly_field_value') }
+
+      context 'that evaluates to false' do
+        let(:admin) { true }
+
+        it 'assigns the value' do
+          expect(subject).to have_attributes(readonly_field: 'readonly_field_value')
+        end
+      end
+
+      context 'that evaluates to true' do
+        let(:admin) { false }
+
+        it 'assigns the value' do
+          expect(subject).to have_attributes(readonly_field: 'readonly_field_value')
+        end
+      end
+    end
+
     context 'when a field has a `disabled` proc' do
       let(:my_model_params) { super().merge(disabled_field: 'disabled_field_value') }
 
@@ -129,8 +149,8 @@ RSpec.describe Formwandler::Form do
     context 'with no arguments' do
       subject { form.fields }
 
-      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 9) }
-      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field), have_attributes(name: :array_field), have_attributes(name: :hidden_field), have_attributes(name: :disabled_field)]) }
+      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 10) }
+      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field), have_attributes(name: :array_field), have_attributes(name: :hidden_field), have_attributes(name: :disabled_field), have_attributes(name: :readonly_field)]) }
     end
 
     context 'with multiple existing field names as arguments' do

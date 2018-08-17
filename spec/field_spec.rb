@@ -2,15 +2,18 @@ require 'spec_helper'
 
 RSpec.describe Formwandler::Field do
   let(:field_name) { :my_field }
+  let(:model_field_type) { double }
+  let(:model_class) { double('ActiveRecord::Base', attribute_types: {field_name.to_s => model_field_type}, my_fields: {option1: 0, option2: 1, option3: 2}) }
+  let(:model_instance) { double(class: model_class) }
+  let(:model) { nil }
   let(:form) { double('Formwandler::Form', models: {model => model_instance}) }
-  let(:field_definition) { double('Formwandler::FieldDefinition', name: field_name, model: model, options: options, hidden_options: hidden_options) }
+  let(:field_definition_params) { {name: field_name, model: model} }
+  let(:field_definition) { double('Formwandler::FieldDefinition', field_definition_params) }
   let(:field) { described_class.new(form: form, field_definition: field_definition) }
 
   describe '#options' do
-    let(:model_field_type) { double }
-    let(:model_class) { double('ActiveRecord::Base', attribute_types: {field_name.to_s => model_field_type}, my_fields: {option1: 0, option2: 1, option3: 2}) }
-    let(:model_instance) { double(class: model_class) }
     let(:hidden_options) { {} }
+    let(:field_definition_params) { super().merge(options: options, hidden_options: hidden_options) }
 
     subject { field.options }
 
@@ -58,6 +61,46 @@ RSpec.describe Formwandler::Field do
           include_context 'model field type is enum', false
 
           it { is_expected.to eq([]) }
+        end
+      end
+    end
+  end
+
+  describe '#readonly?' do
+    let(:field_definition_params) { super().merge(readonly: readonly_value) }
+
+    subject { field.readonly? }
+
+    context 'when the readonly value is' do
+      context 'false' do
+        let(:readonly_value) { false }
+
+        it { is_expected.to eq(false) }
+      end
+
+      context 'true' do
+        let(:readonly_value) { true }
+
+        it { is_expected.to eq(true) }
+      end
+
+      context 'a proc' do
+        let(:readonly_value) { -> { readonly_proc_value } }
+
+        before(:each) do
+          expect(form).to receive(:readonly_proc_value).and_return(readonly_proc_value)
+        end
+
+        context 'that evaluates to true' do
+          let(:readonly_proc_value) { true }
+
+          it { is_expected.to eq(true) }
+        end
+
+        context 'that evaluates to false' do
+          let(:readonly_proc_value) { false }
+
+          it { is_expected.to eq(false) }
         end
       end
     end
