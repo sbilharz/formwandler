@@ -4,7 +4,9 @@ RSpec.describe Formwandler::Form do
   let(:form_class) { MyModelForm }
   let(:my_model) { MyModel.new }
   let(:models) { {my_model: my_model} }
-  let(:controller) { double('MyModelsController', params: ActionController::Parameters.new(params)) }
+  let(:admin) { true }
+  let(:current_user) { double(admin?: admin) }
+  let(:controller) { double('MyModelsController', params: ActionController::Parameters.new(params), current_user: current_user) }
   let(:array_value) { ['1', '2', '3'] }
   let(:my_model_params) { {field1: 'value1', field2: 'value2', field3: 'value3', array_field: array_value} }
   let(:params) { {my_model: my_model_params} }
@@ -21,6 +23,46 @@ RSpec.describe Formwandler::Form do
 
     it 'assigns array values' do
       expect(subject).to have_attributes(array_field: array_value)
+    end
+
+    context 'when a field has a `hidden` proc' do
+      let(:my_model_params) { super().merge(hidden_field: 'hidden_field_value') }
+
+      context 'that evaluates to false' do
+        let(:admin) { true }
+
+        it 'assigns the value' do
+          expect(subject).to have_attributes(hidden_field: 'hidden_field_value')
+        end
+      end
+
+      context 'that evaluates to true' do
+        let(:admin) { false }
+
+        it 'assigns the value' do
+          expect(subject).to have_attributes(hidden_field: 'hidden_field_value')
+        end
+      end
+    end
+
+    context 'when a field has a `disabled` proc' do
+      let(:my_model_params) { super().merge(disabled_field: 'disabled_field_value') }
+
+      context 'that evaluates to false' do
+        let(:admin) { true }
+
+        it 'assigns the value' do
+          expect(subject).to have_attributes(disabled_field: 'disabled_field_value')
+        end
+      end
+
+      context 'that evaluates to true' do
+        let(:admin) { false }
+
+        it 'assigns the value' do
+          expect(subject).to have_attributes(disabled_field: nil)
+        end
+      end
     end
 
     context 'when a field has a "source" option specified' do
@@ -87,8 +129,8 @@ RSpec.describe Formwandler::Form do
     context 'with no arguments' do
       subject { form.fields }
 
-      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 7) }
-      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field), have_attributes(name: :array_field)]) }
+      it { is_expected.to match_array([an_instance_of(Formwandler::Field)] * 9) }
+      it { is_expected.to match_array([have_attributes(name: :field1), have_attributes(name: :field2), have_attributes(name: :field3), have_attributes(name: :transformed_field), have_attributes(name: :field4), have_attributes(name: :boolean_field), have_attributes(name: :array_field), have_attributes(name: :hidden_field), have_attributes(name: :disabled_field)]) }
     end
 
     context 'with multiple existing field names as arguments' do
