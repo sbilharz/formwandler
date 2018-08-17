@@ -15,6 +15,8 @@ class MyModelForm < Formwandler::Form
     end
   end
   field :boolean_field, model: :my_model
+  field :hidden_field, hidden: -> { !controller.current_user.admin? }
+  field :disabled_field, disabled: -> { !controller.current_user.admin? }
 
   validates :field3, inclusion: {in: ['value3']}
 end
