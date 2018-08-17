@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    formwandler (0.6.0)
+    formwandler (0.7.0)
       delocalize (~> 1.2)
       rails (~> 5)
 
