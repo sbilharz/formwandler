@@ -31,3 +31,14 @@
 
 en:
   hello: "Hello world"
+  activemodel:
+    attributes:
+      my_model:
+        field1: 'Field1 directly'
+        field3: 'Field3 directly'
+  activerecord:
+    attributes:
+      my_model:
+        field2: 'Field2 by model'
+        field3: 'Not used'
+        other_field: 'Field4 by model'

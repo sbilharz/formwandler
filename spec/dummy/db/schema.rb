@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170915080828) do
+ActiveRecord::Schema.define(version: 2018_11_12_220854) do
 
   create_table "my_models", force: :cascade do |t|
     t.string "field1"
@@ -20,6 +20,12 @@ ActiveRecord::Schema.define(version: 20170915080828) do
     t.decimal "transformed_field"
     t.string "other_field"
     t.boolean "boolean_field"
+  end
+
+  create_table "unrelated_models", force: :cascade do |t|
+    t.string "some_field"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

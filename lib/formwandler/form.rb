@@ -14,17 +14,23 @@ module Formwandler
         ActiveModel::Name.new(self, nil, name.chomp('Form').underscore)
       end
 
+      def human_attribute_name(attr, options = {})
+        field_definition = @field_definitions.fetch(attr) { nil }
+        if options[:default].nil? && field_definition && field_definition.model_class
+          not_found = '__formwandler_not_found__'
+          model_translation = field_definition.model_class.human_attribute_name(field_definition.source, default: not_found)
+          options[:default] = model_translation unless model_translation == not_found
+        end
+        super(attr, options)
+      end
+
       def field_definitions
         @field_definitions ||= {}
       end
 
       def field(name, opts = {}, &block)
         field_definition = field_definitions[name] ||= FieldDefinition.new(name)
-        opts.each do |key, value|
-          field_definition.public_send("#{key}=", value)
-        rescue NoMethodError
-          raise ArgumentError, "Invalid option #{key}"
-        end
+        field_definition.configure(opts)
         field_definition.instance_exec(&block) if block_given?
 
         attribute_accessor(name)
