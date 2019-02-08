@@ -13,6 +13,38 @@ RSpec.describe Formwandler::Form do
       end
     end
 
+    shared_examples_for 'initializing #model_class' do
+      subject do
+        super()
+        MyForm.field_definitions[name].model_class
+      end
+
+      shared_examples_for 'prioritizing :model_class' do
+        let(:options) { super().merge(model_class: UnrelatedModel) }
+
+        it { is_expected.to be(UnrelatedModel) }
+      end
+
+      context 'when the model class is inferrable from :model' do
+        it { is_expected.to be(MyModel) }
+        it_behaves_like 'prioritizing :model_class'
+      end
+
+      context 'when the model class is not inferrable from :model 1' do
+        let(:options) { super().merge(model: :not_inferrable_model) }
+
+        it { is_expected.to be_nil }
+        it_behaves_like 'prioritizing :model_class'
+      end
+
+      context 'when the model class is not inferrable from :model 2' do
+        let(:options) { super().merge(model: nil) }
+
+        it { is_expected.to be_nil }
+        it_behaves_like 'prioritizing :model_class'
+      end
+    end
+
     context 'with no arguments' do
       subject { MyForm.field }
 
@@ -29,6 +61,7 @@ RSpec.describe Formwandler::Form do
       subject { MyForm.field(name, options) }
 
       it_behaves_like 'not raising an error'
+      it_behaves_like 'initializing #model_class'
 
       context 'with invalid options' do
         let(:options) { {foo: 'bar'} }
@@ -41,6 +74,7 @@ RSpec.describe Formwandler::Form do
       subject { MyForm.field(name, options, &block) }
 
       it_behaves_like 'not raising an error'
+      it_behaves_like 'initializing #model_class'
 
       context 'when the field was already defined' do
         let(:default_value) { 'a_string' }
@@ -59,6 +93,48 @@ RSpec.describe Formwandler::Form do
           subject
           expect(form_instance.field(name).default).to eq(default_value)
         end
+      end
+    end
+  end
+
+  describe '.human_attribute_name' do
+    subject { MyModelForm.human_attribute_name(field, options) }
+
+    let(:options) { {} }
+
+    describe 'for a field with translation in form namespace' do
+      context 'when the field is backed by a model' do
+        let(:field) { :field1 }
+
+        it { is_expected.to eq('Field1 directly') }
+      end
+
+      context 'when the field is not backed by a model' do
+        let(:field) { :field3 }
+
+        it { is_expected.to eq('Field3 directly') }
+      end
+    end
+
+    describe 'for a field with translation in the backing model\s namespace' do
+      shared_examples_for 'prioritizing an explicit default' do
+        let(:options) { super().merge(default: 'I have precedence') }
+
+        it { is_expected.to eq('I have precedence') }
+      end
+
+      context 'when the field has no different source' do
+        let(:field) { :field2 }
+
+        it { is_expected.to eq('Field2 by model') }
+        it_behaves_like 'prioritizing an explicit default'
+      end
+
+      context 'when the field has a different source' do
+        let(:field) { :field4 }
+
+        it { is_expected.to eq('Field4 by model') }
+        it_behaves_like 'prioritizing an explicit default'
       end
     end
   end
