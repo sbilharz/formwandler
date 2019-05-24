@@ -6,21 +6,15 @@ module Formwandler
 
     class_methods do
       def load_form(opts = {})
-        before_action :_formwandler_load_form, opts
-      end
-
-      def skip_load_form(opts = {})
-        skip_before_action :_formwandler_load_form, opts
+        before_action(opts.except(:models)) do
+          models = opts[:models] || {inferred_resource_name.to_sym => instance_variable_get("@#{inferred_resource_name}")}.compact
+          form_instance = form_class.new(models: models, controller: self)
+          instance_variable_set("@#{form_instance_name}", form_instance)
+        end
       end
     end
 
     private
-
-    def _formwandler_load_form
-      models = opts[:models] || {inferred_resource_name.to_sym => instance_variable_get("@#{inferred_resource_name}")}.compact
-      form_instance = form_class.new(models: models, controller: self)
-      instance_variable_set("@#{form_instance_name}", form_instance)
-    end
 
     def form_class_name
       "#{namespace}::#{inferred_resource_name.camelize}Form"
