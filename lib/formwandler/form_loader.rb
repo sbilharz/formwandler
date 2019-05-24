@@ -17,7 +17,7 @@ module Formwandler
     private
 
     def _formwandler_load_form
-      models = {inferred_resource_name.to_sym => instance_variable_get("@#{inferred_resource_name}")}.compact
+      models = opts[:models] || {inferred_resource_name.to_sym => instance_variable_get("@#{inferred_resource_name}")}.compact
       form_instance = form_class.new(models: models, controller: self)
       instance_variable_set("@#{form_instance_name}", form_instance)
     end
