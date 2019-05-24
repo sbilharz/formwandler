@@ -2,15 +2,6 @@ require 'spec_helper'
 
 RSpec.describe Formwandler::FormLoader, type: :controller do
   controller MyModelsController do
-    load_form only: [:index]
-
-    def index
-      head 200
-    end
-
-    def new
-      head 200
-    end
   end
 
   context 'for actions with load_form' do
@@ -23,18 +14,25 @@ RSpec.describe Formwandler::FormLoader, type: :controller do
 
     context 'when a model instance is assigned to the matching instance variable' do
       controller MyModelsController do
-        before_action { @my_model = MyModel.new }
-
-        load_form only: [:index]
-
-        def index
-          head 200
-        end
+        prepend_before_action { @my_model = MyModel.new }
       end
 
       it 'injects it to the form instance' do
         subject
         expect(assigns(:my_model_form).models[:my_model]).to be_an_instance_of(MyModel)
+      end
+
+      context 'when explicitly specifying the models to provide' do
+        controller MyModelsController do
+          load_form models: false
+        end
+
+        subject { get :index }
+
+        it 'provides the correct models hash' do
+          subject
+          expect(assigns(:my_model_form).models).to eq({})
+        end
       end
     end
 
