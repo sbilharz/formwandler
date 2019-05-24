@@ -21,6 +21,19 @@ RSpec.describe Formwandler::FormLoader, type: :controller do
         subject
         expect(assigns(:my_model_form).models[:my_model]).to be_an_instance_of(MyModel)
       end
+
+      context 'when explicitly specifying the models to provide' do
+        controller MyModelsController do
+          load_form models: false
+        end
+
+        subject { get :index }
+
+        it 'provides the correct models hash' do
+          subject
+          expect(assigns(:my_model_form).models).to eq({})
+        end
+      end
     end
 
     context 'when the matching instance variable is not assigned' do
@@ -54,19 +67,6 @@ RSpec.describe Formwandler::FormLoader, type: :controller do
     it 'does not assign @my_model_form' do
       subject
       expect(assigns(:my_model_form)).to be_nil
-    end
-  end
-
-  context 'when explicitly specifying the models to provide' do
-    controller MyModelsController do
-      load_form models: {}
-    end
-
-    subject { get :index }
-
-    it 'provides the correct models hash' do
-      subject
-      expect(assigns(:my_model_form).models).to eq({})
     end
   end
 end
