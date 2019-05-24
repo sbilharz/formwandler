@@ -56,4 +56,17 @@ RSpec.describe Formwandler::FormLoader, type: :controller do
       expect(assigns(:my_model_form)).to be_nil
     end
   end
+
+  context 'when explicitly specifying the models to provide' do
+    controller MyModelsController do
+      load_form models: {}
+    end
+
+    subject { get :index }
+
+    it 'provides the correct models hash' do
+      subject
+      expect(assigns(:my_model_form).models).to eq({})
+    end
+  end
 end
