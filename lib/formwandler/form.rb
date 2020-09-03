@@ -126,11 +126,12 @@ module Formwandler
     def models_valid?
       all_valid = true
       models.each do |name, model|
-        all_valid = false if model.invalid?
         next if model.valid?
+
+        all_valid = false
         fields_for_model(name).each do |field|
           model.errors[field.source].each do |error_message|
-            errors.add(field.name, error_message)
+            errors.add(field.name, error_message) unless errors.messages[field.source].include? error_message
           end
         end
       end
