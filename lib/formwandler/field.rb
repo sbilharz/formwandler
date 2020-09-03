@@ -14,7 +14,7 @@ module Formwandler
     def value=(new_value)
       new_value = transform_value(new_value, field_definition.in_transformation)
       if model_instance
-        model_instance.public_send("#{field_definition.source}=", new_value)
+        model_instance.public_send("#{source}=", new_value)
       else
         @value = new_value
       end
@@ -25,7 +25,7 @@ module Formwandler
     end
 
     def raw_value
-      model_instance ? model_instance.public_send(field_definition.source) : @value
+      model_instance ? model_instance.public_send(source) : @value
     end
 
     def hidden?
