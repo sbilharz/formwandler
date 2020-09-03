@@ -204,6 +204,18 @@ RSpec.describe Formwandler::Form do
           expect(form.errors.keys).to match_array([:field2, :field3])
         end
       end
+
+      context 'and there are duplicate error messages between the model and associated form fields' do
+        let(:form_class) { DuplicateValidationForm }
+        let(:my_model_params) { {field2: 'invalid_value'} }
+
+        it { is_expected.to eq(false) }
+
+        it 'conflates the duplicate error messages' do
+          subject
+          expect(form.errors[:field2]).to match_array(['is not included in the list'])
+        end
+      end
     end
   end
 

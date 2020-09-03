@@ -9,6 +9,8 @@ Rails::Controller::Testing.install
 
 RSpec.configure do |c|
   c.infer_base_class_for_anonymous_controllers = false
+  c.filter_run :focus
+  c.run_all_when_everything_filtered = true
 end
 
 RSpec.shared_examples_for 'raising an ArgumentError' do
