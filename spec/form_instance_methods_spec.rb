@@ -201,7 +201,7 @@ RSpec.describe Formwandler::Form do
 
         it 'adds all error keys' do
           subject
-          expect(form.errors.keys).to match_array([:field2, :field3])
+          expect(form.errors.attribute_names).to match_array([:field2, :field3])
         end
       end
 
