@@ -4,11 +4,12 @@ require_relative 'field_value_transformer'
 
 module Formwandler
   class FieldDefinition
-    attr_reader :name
+    attr_reader :name, :transform_blank
     attr_accessor :hidden, :disabled, :readonly, :default, :delocalize, :model, :model_class, :source, :options, :array
 
     def initialize(name)
       @name = name
+      @transform_blank = false
       set_defaults
     end
 
@@ -48,7 +49,8 @@ module Formwandler
       @hidden_options ||= {}
     end
 
-    def transform(&block)
+    def transform(allow_blank: false, &block)
+      @transform_blank = allow_blank
       @value_transformer = FieldValueTransformer.new(&block)
     end
 
